@@ -15,23 +15,16 @@ import com.daengnyangffojjak.dailydaengnyang.repository.RecordRepository;
 
 import com.daengnyangffojjak.dailydaengnyang.utils.Validator;
 import com.daengnyangffojjak.dailydaengnyang.utils.event.RecordCreateEvent;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,14 +80,13 @@ public class RecordService {
 		return records.map(this::toResponse);
 	}
 
-	private RecordResponse toResponse (Record record) {
+	private RecordResponse toResponse(Record record) {
 		List<RecordFile> recordFiles = recordFileRepository.findByRecord_Id(record.getId());
 		return RecordResponse.of(record, recordFiles);
 	}
 
 	// 일기 작성
 	@Transactional
-	@Async ("ThreadPoolTaskExecutorBean")
 	public RecordWorkResponse createRecord(Long petId, RecordWorkRequest recordWorkRequest,
 			String userName) {
 
@@ -183,7 +175,8 @@ public class RecordService {
 
 	// 일기 기간별 조회
 	@Transactional(readOnly = true)
-	public List<RecordResponse> getRecordList(Long petId, String fromDate, String toDate, String username) {
+	public List<RecordResponse> getRecordList(Long petId, String fromDate, String toDate,
+			String username) {
 		User user = validator.getUserByUserName(username);
 		Pet pet = validator.getPetWithUsername(petId, username);
 
@@ -193,29 +186,14 @@ public class RecordService {
 		List<Record> records = recordRepository.findAllByCreatedAtBetweenAndPetId(
 				Sort.by(Direction.DESC, "createdAt"), start, end, petId);
 
-		return 	records.stream().map(this::toResponse).toList();
+		return records.stream().map(this::toResponse).toList();
 	}
 
-	private LocalDateTime getLocalDateFromString (String date) {
+	private LocalDateTime getLocalDateFromString(String date) {
 		int year = Integer.parseInt(date.substring(0, 4));
 		int month = Integer.parseInt(date.substring(4, 6));
 		int day = Integer.parseInt(date.substring(6, 8));
 
 		return LocalDateTime.of(year, month, day, 0, 0, 0);
-	}
-
-	@Bean(name = "ThreadPoolTaskExecutorBean")
-	public Executor getAsyncExecutor() {
-		int corePoolsize = 5;
-		int maxPoolsize = 5;
-		int queueCapacity = 5;
-
-		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(corePoolsize);
-		executor.setMaxPoolSize(maxPoolsize);
-		executor.setQueueCapacity(queueCapacity);
-		executor.setRejectedExecutionHandler(new CallerRunsPolicy());
-		executor.initialize();
-		return executor;
 	}
 }
