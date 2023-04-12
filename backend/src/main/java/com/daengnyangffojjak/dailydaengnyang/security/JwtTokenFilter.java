@@ -34,7 +34,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 		//3. 적절하지 않은 Token일 경우
 
 		final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-		log.info("authorizationHeader:{}", authorizationHeader);
 
 
 		//헤더 형식 확인
@@ -44,7 +43,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		String token = "";
+		String token;
 		if (authorizationHeader.startsWith("Bearer ")){
 			token = authorizationHeader.replace("Bearer ", "");
 		} else{
@@ -53,18 +52,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 			return;
 		}
-//
-//		String token;
-//		try {
-//			token = authorizationHeader.split(" ")[1];
-//		} catch (Exception e) {
-//			log.error("token 추출에 실패했습니다.");
-//			filterChain.doFilter(request, response);
-//			return;
-//		}
+		log.info("JWT:{}", token);
 
 		UserDetails userDetails = jwtTokenUtil.getUserDetails(token);
-		//Redis에 해당 accessToken logout 여부 확인
+		// Redis에 해당 accessToken logout 여부 확인
 		// 해당 accssToken은 블랙리스트에 있는지 확인
 		String isLogout = (String) redisTemplate.opsForValue().get(token);
 		if (ObjectUtils.isEmpty(isLogout)) {
