@@ -36,33 +36,47 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 		final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		log.info("authorizationHeader:{}", authorizationHeader);
 
-		String token;
-		try {
-			token = authorizationHeader.split(" ")[1];
-		} catch (Exception e) {
-			log.error("token 추출에 실패했습니다.");
+
+		//헤더 형식 확인
+		if(authorizationHeader == null){
+			SecurityContextHolder.getContext().setAuthentication(null);
 			filterChain.doFilter(request, response);
 			return;
 		}
 
-		if (authorizationHeader.startsWith("Bearer ")) {
-			UserDetails userDetails = jwtTokenUtil.getUserDetails(token);
-			//Redis에 해당 accessToken logout 여부 확인
-			// 해당 accssToken은 블랙리스트에 있는지 확인
-			String isLogout = (String) redisTemplate.opsForValue().get(token);
-			if (ObjectUtils.isEmpty(isLogout)) {
-				//문열어주기 >> 허용
-				//Role 바인딩
-				UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-						userDetails, null, userDetails.getAuthorities());
-				authenticationToken.setDetails(
-						new WebAuthenticationDetailsSource().buildDetails(request));
-				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-			}
-
-		} else {
-			log.error("헤더를 가져오는 과정에서 에러가 났습니다. 헤더가 null이거나 잘못되었습니다.");
+		String token = "";
+		if (authorizationHeader.startsWith("Bearer ")){
+			token = authorizationHeader.replace("Bearer ", "");
+		} else{
+			token = "";
+			log.error("Authorization 헤더 형식이 틀립니다. : {}", authorizationHeader);
+			filterChain.doFilter(request, response);
+			return;
 		}
+//
+//		String token;
+//		try {
+//			token = authorizationHeader.split(" ")[1];
+//		} catch (Exception e) {
+//			log.error("token 추출에 실패했습니다.");
+//			filterChain.doFilter(request, response);
+//			return;
+//		}
+
+		UserDetails userDetails = jwtTokenUtil.getUserDetails(token);
+		//Redis에 해당 accessToken logout 여부 확인
+		// 해당 accssToken은 블랙리스트에 있는지 확인
+		String isLogout = (String) redisTemplate.opsForValue().get(token);
+		if (ObjectUtils.isEmpty(isLogout)) {
+			//문열어주기 >> 허용
+			//Role 바인딩
+			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+					userDetails, null, userDetails.getAuthorities());
+			authenticationToken.setDetails(
+					new WebAuthenticationDetailsSource().buildDetails(request));
+			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+		}
+
 		filterChain.doFilter(request, response);
 	}
 
