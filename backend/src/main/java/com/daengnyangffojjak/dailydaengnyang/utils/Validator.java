@@ -40,11 +40,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class Validator {
 
 	private final UserRepository userRepository;
@@ -67,6 +69,7 @@ public class Validator {
 	}
 
 	public User getUserByUserName(String userName) {
+		log.info("getUserByUserName");
 		return userRepository.findByUserName(userName)
 				.orElseThrow(() -> new UserException(ErrorCode.USERNAME_NOT_FOUND));
 	}
