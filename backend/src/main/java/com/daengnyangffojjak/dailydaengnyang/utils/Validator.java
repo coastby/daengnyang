@@ -69,7 +69,6 @@ public class Validator {
 	}
 
 	public User getUserByUserName(String userName) {
-		log.info("getUserByUserName");
 		return userRepository.findByUserName(userName)
 				.orElseThrow(() -> new UserException(ErrorCode.USERNAME_NOT_FOUND));
 	}
