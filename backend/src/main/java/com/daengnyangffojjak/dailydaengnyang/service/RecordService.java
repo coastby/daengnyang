@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -63,6 +65,7 @@ public class RecordService {
 	}
 
 	// 전체 피드 조회
+	@Cacheable(cacheNames = "feed")
 	@Transactional(readOnly = true)
 	public Page<RecordResponse> getAllRecords(Pageable pageable) {
 
@@ -87,6 +90,7 @@ public class RecordService {
 
 	// 일기 작성
 	@Transactional
+	@CacheEvict(cacheNames = "feed", condition = "#recordWorkRequest.isPublic == true")
 	public RecordWorkResponse createRecord(Long petId, RecordWorkRequest recordWorkRequest,
 			String userName) {
 
