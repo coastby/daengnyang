@@ -65,7 +65,7 @@ public class RecordService {
 	}
 
 	// 전체 피드 조회
-	@Cacheable(cacheNames = "feed")
+//	@Cacheable(cacheNames = "feed")
 	@Transactional(readOnly = true)
 	public Page<RecordResponse> getAllRecords(Pageable pageable) {
 
