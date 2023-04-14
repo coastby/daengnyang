@@ -65,7 +65,7 @@ public class RecordService {
 	}
 
 	// 전체 피드 조회
-//	@Cacheable(cacheNames = "feed")
+	@Cacheable(cacheNames = "feed")
 	@Transactional(readOnly = true)
 	public Page<RecordResponse> getAllRecords(Pageable pageable) {
 
@@ -90,7 +90,7 @@ public class RecordService {
 
 	// 일기 작성
 	@Transactional
-//	@CacheEvict(cacheNames = "feed", condition = "#recordWorkRequest.isPublic == true")
+	@CacheEvict(cacheNames = "feed", condition = "#recordWorkRequest.isPublic == true")
 	public RecordWorkResponse createRecord(Long petId, RecordWorkRequest recordWorkRequest,
 			String userName) {
 
