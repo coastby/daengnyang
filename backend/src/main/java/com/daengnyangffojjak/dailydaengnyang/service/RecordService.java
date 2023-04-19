@@ -90,7 +90,7 @@ public class RecordService {
 
 	// 일기 작성
 	@Transactional
-	@CacheEvict(cacheNames = "feed", condition = "#recordWorkRequest.isPublic == true")
+	@CacheEvict(condition = "#recordWorkRequest.isPublic == true", cacheNames = "feed", allEntries = true)
 	public RecordWorkResponse createRecord(Long petId, RecordWorkRequest recordWorkRequest,
 			String userName) {
 
