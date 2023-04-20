@@ -2,8 +2,8 @@
 
 <img src="readme_img/댕냥타이틀.png" width="600" height="200">    
 
-<a href="https://daengnyang.site"><img src="https://img.shields.io/badge/daengnyang-4285F4?style=flat&logo=Google Chrome&logoColor=white" /></a>
-<a href="https://daengnyang.site/docs/index.html"><img src="https://img.shields.io/badge/restdocs-83B81A?style=flat&logo=Google Chrome&logoColor=white" /></a>
+<a href="https://daengnyang.store"><img src="https://img.shields.io/badge/daengnyang-4285F4?style=flat&logo=Google Chrome&logoColor=white" /></a>
+<a href="https://daengnyang.store/docs/index.html"><img src="https://img.shields.io/badge/restdocs-83B81A?style=flat&logo=Google Chrome&logoColor=white" /></a>
 <a href="https://daengnyangproject.tistory.com/"><img src="https://img.shields.io/badge/techblog-ECD53F?style=flat&logo=Google Chrome&logoColor=white" /></a>
 
 <img src="readme_img/댕냥소개글수정.png">
