@@ -22,15 +22,22 @@
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script th:inline="javascript">
-  let tokenVal = [[${token}]].toString();
+  let statusVal = [[${status}]].toString();
+  let contentVal = [[${content}]].toString();
   $(document).ready(function () {
-    window.localStorage.setItem("accessToken", tokenVal);
+    if (statusVal === "success") {
+      window.localStorage.setItem("accessToken", contentVal);
 
-    document.location.href = "/view/groups";
-    const accessToken = window.localStorage.getItem("accessToken");
-    if (accessToken != null) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-      return true;
+      document.location.href = "/view/groups";
+      const accessToken = window.localStorage.getItem("accessToken");
+      if (accessToken != null) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        return true;
+      }
+    } else {
+      alert(contentVal);
+      document.location.href = "/view/users/login";
+
     }
 
   });

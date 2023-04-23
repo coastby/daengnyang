@@ -30,14 +30,18 @@ public class UserUiController {
 	}
 
 	@GetMapping("/login")
-	public String login(Model model, @CookieValue(value = "Set-Cookie", required = false) Cookie cookie) {
+	public String login(Model model,
+			@CookieValue(value = "Set-Cookie", required = false) Cookie cookie) {
 		model.addAttribute("userLoginRequest", new UserLoginRequest());
 		return "users/login";
 	}
 
 	@GetMapping("/oauth2/redirect")
-	public String oauthRedirect(Model model, @RequestParam String token, @CookieValue(value = "Set-Cookie", required = false) Cookie cookie) {
-		model.addAttribute("token", token);
+	public String oauthRedirect(Model model, @RequestParam String content,
+			@RequestParam String status,
+			@CookieValue(value = "Set-Cookie", required = false) Cookie cookie) {
+		model.addAttribute("content", content);
+		model.addAttribute("status", status);
 		return "users/oauth";
 	}
 
