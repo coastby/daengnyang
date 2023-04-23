@@ -6,6 +6,7 @@ import com.daengnyangffojjak.dailydaengnyang.security.CustomAuthenticationEntryP
 import com.daengnyangffojjak.dailydaengnyang.security.CustomOAuth2Service;
 import com.daengnyangffojjak.dailydaengnyang.security.JwtExceptionFilter;
 import com.daengnyangffojjak.dailydaengnyang.security.JwtTokenFilter;
+import com.daengnyangffojjak.dailydaengnyang.security.OAuth2AuthenticationFailureHandler;
 import com.daengnyangffojjak.dailydaengnyang.security.OAuth2AuthenticationSuccessHandler;
 import com.daengnyangffojjak.dailydaengnyang.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class SecurityConfiguration {
 	private final RedisTemplate redisTemplate;
 	private final CustomOAuth2Service customOAuth2Service;
 	private final OAuth2AuthenticationSuccessHandler OAuth2AuthenticationSuccessHandler;
+	private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -64,7 +66,7 @@ public class SecurityConfiguration {
 				.userService(customOAuth2Service)    //provider로부터 획득한 유저정보를 다룰 service단을 지정한다.
 				.and()
 				.successHandler(OAuth2AuthenticationSuccessHandler)
-//				.failureHandler(authenticationFailureHandler)
+				.failureHandler(oAuth2AuthenticationFailureHandler)
 				.and()
 				.addFilterBefore(new JwtTokenFilter(jwtTokenUtil, redisTemplate),
 						UsernamePasswordAuthenticationFilter.class) //UserNamePasswordAuthenticationFilter적용하기 전에 JWTTokenFilter를 적용
